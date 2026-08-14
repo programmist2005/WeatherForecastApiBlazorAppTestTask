@@ -1,0 +1,87 @@
+﻿@using WeatherForecastApi.Application.Models;
+
+<div class="col-md-6">
+	<div class="card mb-4">
+		<div class="card-body">
+			<h2>@Current.City</h2>
+
+			@if (!string.IsNullOrEmpty(Current.Region) || !string.IsNullOrEmpty(Current.Country))
+			{
+				var location = string.Join(", ", new[] { Current.Region, Current.Country }
+					.Where(s => !string.IsNullOrEmpty(s)));
+				<p class="text-muted">@location</p>
+			}
+
+			<!-- Температура -->
+			<p>
+				<strong>Температура:</strong>
+				<span class="temperature">
+					@FormatTemp(Current.TempC, Current.TempF)
+				</span>
+			</p>
+
+			<!-- Ощущается как -->
+			<p>
+				<strong>Ощущается как:</strong>
+				<span class="feels-like">
+					@FormatTemp(Current.FeelsLikeC, Current.FeelsLikeF)
+				</span>
+			</p>
+
+			<!-- Ветер -->
+			<p>
+				<strong>Ветер:</strong>
+				<span class="wind-speed">
+					@FormatSpeed(Current.WindKph, Current.WindMph)
+				</span>,
+				направление: @Current.WindDirection (@Current.WindDegree°)
+			</p>
+
+			<!-- Порывы ветра -->
+			<p>
+				<strong>Порывы:</strong>
+				<span class="gust-speed">
+					@FormatSpeed(Current.GustKph, Current.GustMph)
+				</span>
+			</p>
+
+			<!-- Охлаждение ветром -->
+			<p>
+				<strong>Охлаждение ветром:</strong>
+				<span class="windchill">
+					@FormatTemp(Current.WindchillC, Current.WindchillF)
+				</span>
+			</p>
+
+			<!-- Влажность -->
+			<p><strong>Влажность:</strong> @Current.HumidityPercent%</p>
+
+			<!-- Облачность -->
+			<p><strong>Облачность:</strong> @Current.CloudPercent%</p>
+
+			<!-- УФ‑индекс -->
+			<p><strong>УФ‑индекс:</strong> @Current.Uv</p>
+
+
+			<!-- Состояние -->
+			<p><strong>Состояние:</strong> @Current.ConditionText</p>
+		</div>
+	</div>
+</div>
+
+@code {
+	[Parameter, EditorRequired]
+	public CurrentWeatherQueryResult Current { get; set; } = null!;
+
+	[Parameter]
+	public bool UseCelsius { get; set; } = true;
+
+	[Parameter]
+	public bool UseKph { get; set; } = true;
+
+	private string FormatTemp(double celsius, double fahrenheit)
+		=> UseCelsius ? $"{celsius:0.#}°C" : $"{fahrenheit:0.#}°F";
+
+	private string FormatSpeed(double kph, double mph)
+		=> UseKph ? $"{kph:0.#} км/ч" : $"{mph:0.#} mph";
+}

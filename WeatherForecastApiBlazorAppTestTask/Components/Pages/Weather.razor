@@ -1,64 +1,180 @@
 ﻿@page "/weather"
+@rendermode InteractiveServer
 @attribute [StreamRendering]
+@inject IMediator Mediator
 
-<PageTitle>Weather</PageTitle>
+@using MediatR;
+@using WeatherForecastApi.Application.Models
+@using WeatherForecastApi.Application.Queries
+@using WeatherForecastApi.Application.Exceptions
+@using WeatherForecastApiBlazorAppTestTask.Components.Partial
 
-<h1>Weather</h1>
+<PageTitle>Погода</PageTitle>
 
-<p>This component demonstrates showing data.</p>
+<!-- Настройки единиц измерения -->
+<div class="card mb-4">
+	<div class="card-header bg-light"
+		 role="button"
+		 data-bs-toggle="collapse"
+		 href="#unitSettings"
+		 aria-expanded="false"
+		 aria-controls="unitSettings">
+		<h6 class="mb-0 d-flex justify-content-between align-items-center">
+			<span>Настройки единиц измерения</span>
+			<span class="badge bg-primary text-white">
+				<i class="bi bi-chevron-right"></i>
+			</span>
+		</h6>
+	</div>
 
-@if (forecasts == null)
+	<div class="collapse" id="unitSettings">
+		<div class="card-body">
+			<!-- Температура -->
+			<div class="mb-3">
+				<label class="fw-bold mb-2">Температура:</label>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" id="tempC"
+						   checked="@useCelsius"
+						   @onchange="() => useCelsius = true" />
+					<label class="form-check-label" for="tempC">°C (Цельсий)</label>
+				</div>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" id="tempF"
+						   checked="@(!useCelsius)"
+						   @onchange="() => useCelsius = false" />
+					<label class="form-check-label" for="tempF">°F (Фаренгейт)</label>
+				</div>
+			</div>
+
+			<!-- Скорость ветра -->
+			<div>
+				<label class="fw-bold mb-2">Скорость ветра:</label>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" id="speedKph"
+						   checked="@useKph"
+						   @onchange="() => useKph = true" />
+					<label class="form-check-label" for="speedKph">км/ч</label>
+				</div>
+				<div class="form-check form-check-inline">
+					<input class="form-check-input" type="radio" id="speedMph"
+						   checked="@(!useKph)"
+						   @onchange="() => useKph = false" />
+					<label class="form-check-label" for="speedMph">mph</label>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@if (isLoading)
 {
-    <p><em>Loading...</em></p>
+	<div class="text-center my-5">
+		<div class="spinner-border text-primary" role="status"></div>
+		<p class="mt-3">Загрузка погоды...</p>
+	</div>
 }
-else
+else if (errorMessage is not null)
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th aria-label="Temperature in Celsius">Temp. (C)</th>
-                <th aria-label="Temperature in Fahrenheit">Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+	<div class="alert alert-danger">
+		<h5 class="alert-heading">Ошибка</h5>
+		<p>@errorMessage</p>
+		<hr>
+		<button class="btn btn-primary" @onclick="LoadWeatherAsync">
+			Повторить запрос
+		</button>
+	</div>
+}
+else if (weather is not null)
+{
+	var current = weather.Current;
+	var hours = weather.Hourly;
+	var days = weather.Daily;
+
+	<div class="row">
+		<!-- Левая колонка: текущая погода -->
+		<CurrentWeather Current="current"
+						UseCelsius="useCelsius"
+						UseKph="useKph" />
+
+		<!-- Правая колонка: вкладки с прогнозами -->
+		<div class="col-md-6">
+			<!-- Вкладки Bootstrap -->
+			<ul class="nav nav-tabs mb-3" id="weatherTabs" role="tablist">
+				<li class="nav-item" role="presentation">
+					<button class="nav-link active" id="hourly-btn" data-bs-toggle="tab"
+							data-bs-target="#hourly-tab" type="button" role="tab">
+						Почасовой прогноз
+					</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button class="nav-link" id="daily-btn" data-bs-toggle="tab"
+							data-bs-target="#daily-tab" type="button" role="tab">
+						Ежедневный прогноз
+					</button>
+				</li>
+			</ul>
+
+			<div class="tab-content">
+				<!-- Почасовой прогноз -->
+				<div class="tab-pane fade show active" id="hourly-tab" role="tabpanel">
+					<HourlyForecast Hours="hours"
+									UseCelsius="useCelsius"
+									UseKph="useKph" />
+				</div>
+
+				<!-- Ежедневный прогноз -->
+				<div class="tab-pane fade" id="daily-tab" role="tabpanel">
+					<DailyForecast Days="days"
+								   UseCelsius="useCelsius"
+								   UseKph="useKph" />
+				</div>
+			</div>
+		</div>
+	</div>
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+	private bool isLoading = true;
+	private string? errorMessage;
+	private WeatherQueryResult? weather;
+	private bool useCelsius = true;
+	private bool useKph = true;
 
-    protected override async Task OnInitializedAsync()
-    {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        await Task.Delay(500);
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadWeatherAsync();
+	}
 
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
-    }
+	private async Task LoadWeatherAsync()
+	{
+		isLoading = true;
+		errorMessage = null;
+		weather = null;
 
-    private class WeatherForecast
-    {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-    }
+		try
+		{
+			//await Task.Delay(500);
+			weather = await Mediator.Send(new GetWeatherQuery());
+		}
+		catch (ApplicationConfigurationException)
+		{
+			errorMessage = "Ошибка конфигурации запроса";
+		}
+		catch (ApplicationWeatherAPIException)
+		{
+			errorMessage = "Ошибка получения данных о погоде";
+		}
+		catch (ApplicationUnknownException)
+		{
+			errorMessage = "Произошла неизвестная ошибка";
+		}
+		catch (Exception)
+		{
+			errorMessage = "Произошла неизвестная ошибка";
+		}
+		finally
+		{
+			isLoading = false;
+		}
+	}
 }
