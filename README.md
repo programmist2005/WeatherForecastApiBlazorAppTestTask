@@ -15,3 +15,8 @@ WeatherForecastApiBlazorAppTestTask
 http://api.weatherapi.com/v1/current.json?key=fa8b3df74d4042b9aa7135114252304&q=LAT,LON
 
 http://api.weatherapi.com/v1/forecast.json?key=fa8b3df74d4042b9aa7135114252304&q=LAT,LON&days=3
+
+
+Для выполнения задания back-end архитектура (проекты WeatherForecastApi.Domain, WeatherForecastApi.Application, WeatherForecastApi.Infrastructure) взяты из рекозитория
+https://github.com/programmist2005/WeatherForecastApiTestTask
+где реализуется абсолютно идентичная задача. Разница в решениях заключается в реализации front-end.
