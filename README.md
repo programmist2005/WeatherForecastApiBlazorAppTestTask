@@ -1,4 +1,4 @@
-WeatherApiTestTask
+WeatherForecastApiBlazorAppTestTask
 
 Тестовое задание. Написать погодное веб-приложение на .Net Core (.net10, MediatR, Clean Architecture), Blazor Web App:
 
