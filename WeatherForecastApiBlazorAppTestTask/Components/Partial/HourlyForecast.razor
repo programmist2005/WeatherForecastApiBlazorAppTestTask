@@ -17,9 +17,9 @@
 
 							<!-- Центральная часть: температура -->
 							<div class="text-center flex-grow-1 mx-3">
-								<span class="hourly-temp">
-									@FormatTemp(hourly.TempC, hourly.TempF)
-								</span>
+								<Temperature UseCelsius="@UseCelsius"
+											 Celsius="@Convert.ToDecimal(hourly.TempC)"
+											 Fahrenheit="@Convert.ToDecimal(hourly.TempF)" />
 							</div>
 
 							<!-- Правая часть: вероятность осадков и ощущается как -->
@@ -27,9 +27,9 @@
 								<small>Дождь: @hourly.ChanceOfRainPercent%</small><br>
 								<small>
 									Ощ.:
-									<span class="hourly-feels-like">
-										@FormatTemp(hourly.FeelsLikeC, hourly.FeelsLikeF)
-									</span>
+									<Temperature UseCelsius="@UseCelsius"
+												 Celsius="@Convert.ToDecimal(hourly.FeelsLikeC)"
+												 Fahrenheit="@Convert.ToDecimal(hourly.FeelsLikeF)" />
 								</small>
 							</div>
 						</div>
@@ -59,10 +59,4 @@
 
 	[Parameter]
 	public bool UseKph { get; set; } = true;
-
-	private string FormatTemp(decimal celsius, decimal fahrenheit)
-		=> UseCelsius ? $"{celsius:0.#}°C" : $"{fahrenheit:0.#}°F";
-
-	private string FormatSpeed(decimal kph, decimal mph)
-		=> UseKph ? $"{kph:0.#} км/ч" : $"{mph:0.#} mph";
 }

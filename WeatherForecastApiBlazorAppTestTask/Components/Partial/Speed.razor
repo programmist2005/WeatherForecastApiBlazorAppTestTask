@@ -1,0 +1,15 @@
+﻿<span class="wind-speed">
+	@FormatSpeed(Kph, Mph)
+</span>
+
+@code {
+	[Parameter]
+	public bool UseKph { get; set; } = true;
+	[Parameter]
+	public decimal Kph { get; set; }
+	[Parameter]
+	public decimal Mph { get; set; }
+
+	private string FormatSpeed(decimal kph, decimal mph)
+		=> UseKph ? $"{kph:0.#} км/ч" : $"{mph:0.#} mph";
+}

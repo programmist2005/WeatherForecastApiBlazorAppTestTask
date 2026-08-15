@@ -15,22 +15,22 @@
 
 						<!-- Центральная часть: температуры (макс./мин.) -->
 						<div class="text-center flex-grow-1 mx-3">
-							<span class="daily-max-temp">
-								@FormatTemp(daily.MaxTempC, daily.MaxTempF)
-							</span>
+							<Temperature UseCelsius="@UseCelsius"
+										 Celsius="@Convert.ToDecimal(daily.MaxTempC)"
+										 Fahrenheit="@Convert.ToDecimal(daily.MaxTempF)" />
 							/
-							<span class="daily-min-temp">
-								@FormatTemp(daily.MinTempC, daily.MinTempF)
-							</span>
+							<Temperature UseCelsius="@UseCelsius"
+										 Celsius="@Convert.ToDecimal(daily.MinTempC)"
+										 Fahrenheit="@Convert.ToDecimal(daily.MinTempF)" />
 						</div>
 
 						<!-- Правая часть: ветер и вероятность осадков -->
 						<div class="text-end">
 							<small>
 								Ветер:
-								<span class="daily-wind-speed">
-									@FormatSpeed(daily.MaxWindKph, daily.MaxWindMph)
-								</span>
+								<Speed UseKph="@UseKph"
+									   Kph="@Convert.ToDecimal(daily.MaxWindKph)"
+									   Mph="@Convert.ToDecimal(daily.MaxWindMph)" />
 							</small><br>
 							<small>Дождь: @daily.DailyChanceOfRainPercent%</small>
 						</div>
@@ -50,10 +50,4 @@
 
 	[Parameter]
 	public bool UseKph { get; set; } = true;
-
-	private string FormatTemp(decimal celsius, decimal fahrenheit)
-		=> UseCelsius ? $"{celsius:0.#}°C" : $"{fahrenheit:0.#}°F";
-
-	private string FormatSpeed(decimal kph, decimal mph)
-		=> UseKph ? $"{kph:0.#} км/ч" : $"{mph:0.#} mph";
 }
