@@ -1,15 +1,27 @@
-﻿<span class="temperature">
+﻿@inject UnitSettingsService UnitSettings
+@implements IDisposable
+@using WeatherForecastApiBlazorAppTestTask.Services
+
+<span class="temperature">
 	@FormatTemp(Celsius, Fahrenheit)
 </span>
 
 @code {
-	[Parameter]
-	public bool UseCelsius { get; set; } = true;
 	[Parameter]
 	public decimal Celsius { get; set; }
 	[Parameter]
 	public decimal Fahrenheit { get; set; }
 
 	private string FormatTemp(decimal celsius, decimal fahrenheit)
-		=> UseCelsius ? $"{celsius:0.#}°C" : $"{fahrenheit:0.#}°F";
+		=> UnitSettings.UseCelsius ? $"{celsius:0.#}°C" : $"{fahrenheit:0.#}°F";
+
+	protected override void OnInitialized()
+	{
+		UnitSettings.OnChanged += StateHasChanged;
+	}
+
+	public void Dispose()
+	{
+		UnitSettings.OnChanged -= StateHasChanged;
+	}
 }

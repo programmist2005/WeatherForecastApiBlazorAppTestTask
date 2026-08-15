@@ -15,12 +15,10 @@
 
 						<!-- Центральная часть: температуры (макс./мин.) -->
 						<div class="text-center flex-grow-1 mx-3">
-							<Temperature UseCelsius="@UseCelsius"
-										 Celsius="@Convert.ToDecimal(daily.MaxTempC)"
+							<Temperature Celsius="@Convert.ToDecimal(daily.MaxTempC)"
 										 Fahrenheit="@Convert.ToDecimal(daily.MaxTempF)" />
 							/
-							<Temperature UseCelsius="@UseCelsius"
-										 Celsius="@Convert.ToDecimal(daily.MinTempC)"
+							<Temperature Celsius="@Convert.ToDecimal(daily.MinTempC)"
 										 Fahrenheit="@Convert.ToDecimal(daily.MinTempF)" />
 						</div>
 
@@ -28,8 +26,7 @@
 						<div class="text-end">
 							<small>
 								Ветер:
-								<Speed UseKph="@UseKph"
-									   Kph="@Convert.ToDecimal(daily.MaxWindKph)"
+								<Speed Kph="@Convert.ToDecimal(daily.MaxWindKph)"
 									   Mph="@Convert.ToDecimal(daily.MaxWindMph)" />
 							</small><br>
 							<small>Дождь: @daily.DailyChanceOfRainPercent%</small>
@@ -44,10 +41,4 @@
 @code {
 	[Parameter, EditorRequired]
 	public List<DailyWeatherQueryResult> Days { get; set; } = new();
-
-	[Parameter]
-	public bool UseCelsius { get; set; } = true;
-
-	[Parameter]
-	public bool UseKph { get; set; } = true;
 }
