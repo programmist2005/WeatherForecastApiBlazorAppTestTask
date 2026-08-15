@@ -11,78 +11,15 @@
 
 <PageTitle>Погода</PageTitle>
 
-<!-- Настройки единиц измерения -->
-<div class="card mb-4">
-	<div class="card-header bg-light"
-		 role="button"
-		 data-bs-toggle="collapse"
-		 href="#unitSettings"
-		 aria-expanded="false"
-		 aria-controls="unitSettings">
-		<h6 class="mb-0 d-flex justify-content-between align-items-center">
-			<span>Настройки единиц измерения</span>
-			<span class="badge bg-primary text-white">
-				<i class="bi bi-chevron-right"></i>
-			</span>
-		</h6>
-	</div>
-
-	<div class="collapse" id="unitSettings">
-		<div class="card-body">
-			<!-- Температура -->
-			<div class="mb-3">
-				<label class="fw-bold mb-2">Температура:</label>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" id="tempC"
-						   checked="@useCelsius"
-						   @onchange="() => useCelsius = true" />
-					<label class="form-check-label" for="tempC">°C (Цельсий)</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" id="tempF"
-						   checked="@(!useCelsius)"
-						   @onchange="() => useCelsius = false" />
-					<label class="form-check-label" for="tempF">°F (Фаренгейт)</label>
-				</div>
-			</div>
-
-			<!-- Скорость ветра -->
-			<div>
-				<label class="fw-bold mb-2">Скорость ветра:</label>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" id="speedKph"
-						   checked="@useKph"
-						   @onchange="() => useKph = true" />
-					<label class="form-check-label" for="speedKph">км/ч</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input class="form-check-input" type="radio" id="speedMph"
-						   checked="@(!useKph)"
-						   @onchange="() => useKph = false" />
-					<label class="form-check-label" for="speedMph">mph</label>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+<Settings />
 
 @if (isLoading)
 {
-	<div class="text-center my-5">
-		<div class="spinner-border text-primary" role="status"></div>
-		<p class="mt-3">Загрузка погоды...</p>
-	</div>
+	<Loader />
 }
 else if (errorMessage is not null)
 {
-	<div class="alert alert-danger">
-		<h5 class="alert-heading">Ошибка</h5>
-		<p>@errorMessage</p>
-		<hr>
-		<button class="btn btn-primary" @onclick="LoadWeatherAsync">
-			Повторить запрос
-		</button>
-	</div>
+	<ErrorLoad ErrorMessage="errorMessage" OnRetry="LoadWeatherAsync" />
 }
 else if (weather is not null)
 {
@@ -92,9 +29,7 @@ else if (weather is not null)
 
 	<div class="row">
 		<!-- Левая колонка: текущая погода -->
-		<CurrentWeather Current="current"
-						UseCelsius="useCelsius"
-						UseKph="useKph" />
+		<CurrentWeather Current="current" />
 
 		<!-- Правая колонка: вкладки с прогнозами -->
 		<div class="col-md-6">
@@ -117,16 +52,12 @@ else if (weather is not null)
 			<div class="tab-content">
 				<!-- Почасовой прогноз -->
 				<div class="tab-pane fade show active" id="hourly-tab" role="tabpanel">
-					<HourlyForecast Hours="hours"
-									UseCelsius="useCelsius"
-									UseKph="useKph" />
+					<HourlyForecast Hours="hours" />
 				</div>
 
 				<!-- Ежедневный прогноз -->
 				<div class="tab-pane fade" id="daily-tab" role="tabpanel">
-					<DailyForecast Days="days"
-								   UseCelsius="useCelsius"
-								   UseKph="useKph" />
+					<DailyForecast Days="days" />
 				</div>
 			</div>
 		</div>

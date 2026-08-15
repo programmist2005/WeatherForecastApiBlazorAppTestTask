@@ -17,8 +17,7 @@
 
 							<!-- Центральная часть: температура -->
 							<div class="text-center flex-grow-1 mx-3">
-								<Temperature UseCelsius="@UseCelsius"
-											 Celsius="@Convert.ToDecimal(hourly.TempC)"
+								<Temperature Celsius="@Convert.ToDecimal(hourly.TempC)"
 											 Fahrenheit="@Convert.ToDecimal(hourly.TempF)" />
 							</div>
 
@@ -27,8 +26,7 @@
 								<small>Дождь: @hourly.ChanceOfRainPercent%</small><br>
 								<small>
 									Ощ.:
-									<Temperature UseCelsius="@UseCelsius"
-												 Celsius="@Convert.ToDecimal(hourly.FeelsLikeC)"
+									<Temperature Celsius="@Convert.ToDecimal(hourly.FeelsLikeC)"
 												 Fahrenheit="@Convert.ToDecimal(hourly.FeelsLikeF)" />
 								</small>
 							</div>
@@ -53,10 +51,4 @@
 @code {
 	[Parameter, EditorRequired]
 	public List<HourlyWeatherQueryResult> Hours { get; set; } = new();
-
-	[Parameter]
-	public bool UseCelsius { get; set; } = true;
-
-	[Parameter]
-	public bool UseKph { get; set; } = true;
 }

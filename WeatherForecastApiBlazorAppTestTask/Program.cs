@@ -2,6 +2,7 @@ using Serilog;
 using WeatherForecastApi.Application;
 using WeatherForecastApi.Infrastructure;
 using WeatherForecastApiBlazorAppTestTask.Components;
+using WeatherForecastApiBlazorAppTestTask.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -22,6 +23,7 @@ builder.Services.AddRazorComponents()
 // Application services
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(config);
+builder.Services.AddSingleton<UnitSettingsService>();
 
 var app = builder.Build();
 
