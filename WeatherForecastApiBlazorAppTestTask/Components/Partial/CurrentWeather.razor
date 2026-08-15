@@ -15,42 +15,42 @@
 			<!-- Температура -->
 			<p>
 				<strong>Температура:</strong>
-				<span class="temperature">
-					@FormatTemp(Current.TempC, Current.TempF)
-				</span>
+				<Temperature UseCelsius="@UseCelsius"
+							 Celsius="@Convert.ToDecimal(Current.TempC)"
+							 Fahrenheit="@Convert.ToDecimal(Current.TempF)" />
 			</p>
 
 			<!-- Ощущается как -->
 			<p>
 				<strong>Ощущается как:</strong>
-				<span class="feels-like">
-					@FormatTemp(Current.FeelsLikeC, Current.FeelsLikeF)
-				</span>
+				<Temperature UseCelsius="@UseCelsius"
+							 Celsius="@Convert.ToDecimal(Current.FeelsLikeC)"
+							 Fahrenheit="@Convert.ToDecimal(Current.FeelsLikeF)" />
 			</p>
 
 			<!-- Ветер -->
 			<p>
 				<strong>Ветер:</strong>
-				<span class="wind-speed">
-					@FormatSpeed(Current.WindKph, Current.WindMph)
-				</span>,
+				<Speed UseKph="@UseKph" 
+						Kph="@Convert.ToDecimal(Current.WindKph)" 
+						Mph="@Convert.ToDecimal(Current.WindMph)" />,
 				направление: @Current.WindDirection (@Current.WindDegree°)
 			</p>
 
 			<!-- Порывы ветра -->
 			<p>
 				<strong>Порывы:</strong>
-				<span class="gust-speed">
-					@FormatSpeed(Current.GustKph, Current.GustMph)
-				</span>
+				<Speed UseKph="@UseKph"
+					   Kph="@Convert.ToDecimal(Current.GustKph)"
+					   Mph="@Convert.ToDecimal(Current.GustMph)" />
 			</p>
 
 			<!-- Охлаждение ветром -->
 			<p>
 				<strong>Охлаждение ветром:</strong>
-				<span class="windchill">
-					@FormatTemp(Current.WindchillC, Current.WindchillF)
-				</span>
+				<Temperature UseCelsius="@UseCelsius"
+							 Celsius="@Convert.ToDecimal(Current.WindchillC)"
+							 Fahrenheit="@Convert.ToDecimal(Current.WindchillF)" />
 			</p>
 
 			<!-- Влажность -->
@@ -78,10 +78,4 @@
 
 	[Parameter]
 	public bool UseKph { get; set; } = true;
-
-	private string FormatTemp(double celsius, double fahrenheit)
-		=> UseCelsius ? $"{celsius:0.#}°C" : $"{fahrenheit:0.#}°F";
-
-	private string FormatSpeed(double kph, double mph)
-		=> UseKph ? $"{kph:0.#} км/ч" : $"{mph:0.#} mph";
 }
